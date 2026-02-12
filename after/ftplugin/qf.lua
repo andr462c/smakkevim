@@ -6,10 +6,6 @@ vim.keymap.set("n", "p", "<CR>zz<C-w>p", opts)
 -- close
 vim.keymap.set("n", "q", ":close<CR>", opts)
 
--- Use 'j' and 'k' to preview items without leaving the list
-vim.keymap.set("n", "j", "j<CR>zz<C-w>p", opts)
-vim.keymap.set("n", "k", "k<CR>zz<C-w>p", opts)
-
 -- Press 'dd' to remove an item from the quickfix list
 vim.keymap.set("n", "dd", function()
   local qf_list = vim.fn.getqflist()

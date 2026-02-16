@@ -22,6 +22,11 @@ local function copy_git_hash()
   end
 end
 
+local function toggle_virtual_lines()
+    local new_config = not vim.diagnostic.config().virtual_lines
+    vim.diagnostic.config({ virtual_lines = new_config , virtual_text = not new_config})
+end
+
 which_key.add({
   {
     "<leader>E",
@@ -45,9 +50,11 @@ which_key.add({
   { "<leader>g]", ":Gitsigns nav_hunk next<CR>",             desc = "Navigate to next git chunk" },
   { "<leader>g[", ":Gitsigns nav_hunk prev<CR>",             desc = "Navigate to prev git chunk" },
   { "<leader>gy", copy_git_hash,                             desc = "Copy commit hash at cursor" },
-  -- Navigate windows using Ctrl + hjkl
   {
     mode = { 'n' },
+    -- Diagnostic
+    { "gK", toggle_virtual_lines, desc = "Toggle virtual lines diagnostics"},
+    -- Navigate windows using Ctrl + hjkl
     { '<C-h>', '<C-w>h', desc = 'Go to Left Window' },
     { '<C-j>', '<C-w>j', desc = 'Go to Lower Window' },
     { '<C-k>', '<C-w>k', desc = 'Go to Upper Window' },

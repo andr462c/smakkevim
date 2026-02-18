@@ -27,6 +27,12 @@ local function toggle_virtual_lines()
     vim.diagnostic.config({ virtual_lines = new_config , virtual_text = not new_config})
 end
 
+local function open_git_gui_blame()
+  local file = vim.fn.expand("%")
+  local line = vim.fn.line(".")
+  vim.fn.jobstart({ "git", "gui", "blame", "--line=" .. line, file }, { detach = true })
+end
+
 which_key.add({
   {
     "<leader>E",
@@ -41,25 +47,28 @@ which_key.add({
   { "<leader>F", vim.lsp.buf.format, desc = "Format buffer" },
   { "<leader>p", '"_dP',             desc = "Paste without overwrite" },
   { "J",         "mzJ`z",            desc = "Join lines and keep cursor position" },
-  --  Git
-  { "<leader>gb", ":Gitsigns blame<CR>",                     desc = "View git blame for file" },
-  { "<leader>gtl", ":Gitsigns toggle_current_line_blame<CR>", desc = "Toggle inline git blame" },
+   --  Git
+   { "<leader>gb", ":Gitsigns blame<CR>",                     desc = "View git blame for file" },
+   { "<leader>gg", open_git_gui_blame,                        desc = "Open git GUI blame for file" },
+   { "<leader>gtl", ":Gitsigns toggle_current_line_blame<CR>", desc = "Toggle inline git blame" },
   { "<leader>gr", ":Gitsigns reset_hunk<CR>",                desc = "Reset git chunk" },
   { "<leader>gp", ":Gitsigns preview_hunk_inline<CR>",       desc = "Inline chunk preview" },
   { "<leader>gp", ":Gitsigns preview_hunk_inline<CR>",       desc = "Inline chunk preview" },
   { "<leader>g]", ":Gitsigns nav_hunk next<CR>",             desc = "Navigate to next git chunk" },
   { "<leader>g[", ":Gitsigns nav_hunk prev<CR>",             desc = "Navigate to prev git chunk" },
   { "<leader>gy", copy_git_hash,                             desc = "Copy commit hash at cursor" },
-  {
-    mode = { 'n' },
-    -- Diagnostic
-    { "gK", toggle_virtual_lines, desc = "Toggle virtual lines diagnostics"},
-    -- Navigate windows using Ctrl + hjkl
-    { '<C-h>', '<C-w>h', desc = 'Go to Left Window' },
-    { '<C-j>', '<C-w>j', desc = 'Go to Lower Window' },
-    { '<C-k>', '<C-w>k', desc = 'Go to Upper Window' },
-    { '<C-l>', '<C-w>l', desc = 'Go to Right Window' },
-  }
+   {
+     mode = { 'n' },
+     -- Diagnostic
+     { "gK", toggle_virtual_lines, desc = "Toggle virtual lines diagnostics"},
+     { "]e", function() vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to next error" },
+     { "[e", function() vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to previous error" },
+     -- Navigate windows using Ctrl + hjkl
+     { '<C-h>', '<C-w>h', desc = 'Go to Left Window' },
+     { '<C-j>', '<C-w>j', desc = 'Go to Lower Window' },
+     { '<C-k>', '<C-w>k', desc = 'Go to Upper Window' },
+     { '<C-l>', '<C-w>l', desc = 'Go to Right Window' },
+   }
   -- Example
   -- {
   --   "<leader>b",

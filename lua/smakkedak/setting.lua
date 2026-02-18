@@ -13,8 +13,13 @@ vim.opt.expandtab = true
 vim.opt.smartindent = true
  
 vim.opt.wrap = false
- 
+
+vim.opt.scrolloff = 8     -- keep 8 lines above/below cursor when scrolling
+vim.opt.sidescrolloff = 5 -- keep 5 columns left/right of cursor for long lines
+
 vim.opt.incsearch = true -- incremental search
+vim.opt.ignorecase = true -- make search case-insensitive by default
+vim.opt.smartcase = true  -- smart case: uppercase search becomes case-sensitive
  
 vim.opt.termguicolors = true
 

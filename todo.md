@@ -1,11 +1,5 @@
 # TODO
 - rust analyser not removing old diagnostics
-- statusbar
-- Insert end } 
 - autocomplete snippets?
-- search case insensitive
-- buffer of screen following cursor
 - find references to current function
-- jump to next error
-- AI
 - search replace

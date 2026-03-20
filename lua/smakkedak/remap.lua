@@ -23,15 +23,20 @@ local function copy_git_hash()
 end
 
 virtual_text_state = vim.diagnostic.config().virtual_text
+virtual_lines_state = vim.diagnostic.config().virtual_lines
+
+local function set_diagnostic_config()
+  vim.diagnostic.config({ virtual_lines = virtual_lines_state, virtual_text = not virtual_lines_state and virtual_text_state })
+end
 
 local function toggle_virtual_text()
-    virtual_text_state = not vim.diagnostic.config().virtual_text
-    vim.diagnostic.config({ virtual_text = virtual_text_state})
+  virtual_text_state = not vim.diagnostic.config().virtual_text
+  set_diagnostic_config()
 end
 
 local function toggle_virtual_lines()
-    local new_config = not vim.diagnostic.config().virtual_lines
-    vim.diagnostic.config({ virtual_lines = new_config , virtual_text = not(new_config) and virtual_text_state})
+  virtual_lines_state = not vim.diagnostic.config().virtual_lines
+  set_diagnostic_config()
 end
 
 local function open_git_gui_blame()
@@ -41,56 +46,31 @@ local function open_git_gui_blame()
 end
 
 which_key.add({
+  { "<C-d>",       "<C-d>zz",                                 desc = "Half page down and center" },
+  { "<C-u>",       "<C-u>zz",                                 desc = "Half page up and center" },
+  { "<leader>F",   vim.lsp.buf.format,                        desc = "Format buffer" },
+  { "<leader>p",   '"_dP',                                    desc = "Paste without overwrite" },
+  { "J",           "mzJ`z",                                   desc = "Join lines and keep cursor position" },
+  --  Git
+  { "<leader>gb",  ":Gitsigns blame<CR>",                     desc = "View git blame for file" },
+  { "<leader>gg",  open_git_gui_blame,                        desc = "Open git GUI blame for file" },
+  { "<leader>gtl", ":Gitsigns toggle_current_line_blame<CR>", desc = "Toggle inline git blame" },
+  { "<leader>gr",  ":Gitsigns reset_hunk<CR>",                desc = "Reset git chunk" },
+  { "<leader>gp",  ":Gitsigns preview_hunk_inline<CR>",       desc = "Inline chunk preview" },
+  { "<leader>g]",  ":Gitsigns nav_hunk next<CR>",             desc = "Navigate to next git chunk" },
+  { "<leader>g[",  ":Gitsigns nav_hunk prev<CR>",             desc = "Navigate to prev git chunk" },
+  { "<leader>gy",  copy_git_hash,                             desc = "Copy commit hash at cursor" },
   {
-    "<leader>E",
-    function()
-      require('oil').open(nil, { preview = { split = 'belowright' } })
-    end,
-    desc = "Open file explorer"
-  },
-  { "<C-d>",     "<C-d>zz",          desc = "Half page down and center" },
-  { "<C-d>",     "<C-d>zz",          desc = "Half page down and center" },
-  { "<C-u>",     "<C-u>zz",          desc = "Half page up and center" },
-  { "<leader>F", vim.lsp.buf.format, desc = "Format buffer" },
-  { "<leader>p", '"_dP',             desc = "Paste without overwrite" },
-  { "J",         "mzJ`z",            desc = "Join lines and keep cursor position" },
-   --  Git
-   { "<leader>gb", ":Gitsigns blame<CR>",                     desc = "View git blame for file" },
-   { "<leader>gg", open_git_gui_blame,                        desc = "Open git GUI blame for file" },
-   { "<leader>gtl", ":Gitsigns toggle_current_line_blame<CR>", desc = "Toggle inline git blame" },
-  { "<leader>gr", ":Gitsigns reset_hunk<CR>",                desc = "Reset git chunk" },
-  { "<leader>gp", ":Gitsigns preview_hunk_inline<CR>",       desc = "Inline chunk preview" },
-  { "<leader>gp", ":Gitsigns preview_hunk_inline<CR>",       desc = "Inline chunk preview" },
-  { "<leader>g]", ":Gitsigns nav_hunk next<CR>",             desc = "Navigate to next git chunk" },
-  { "<leader>g[", ":Gitsigns nav_hunk prev<CR>",             desc = "Navigate to prev git chunk" },
-  { "<leader>gy", copy_git_hash,                             desc = "Copy commit hash at cursor" },
-   {
-     mode = { 'n' },
-     -- Diagnostic
-     { "gL", toggle_virtual_lines, desc = "Toggle virtual lines diagnostics"},
-     { "gT", toggle_virtual_text, desc = "Toggle virtual text diagnostics"},
-     { "]e", function() vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to next error" },
-     { "[e", function() vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to previous error" },
-     -- Navigate windows using Ctrl + hjkl
-     { '<C-h>', '<C-w>h', desc = 'Go to Left Window' },
-     { '<C-j>', '<C-w>j', desc = 'Go to Lower Window' },
-     { '<C-k>', '<C-w>k', desc = 'Go to Upper Window' },
-     { '<C-l>', '<C-w>l', desc = 'Go to Right Window' },
-   }
-  -- Example
-  -- {
-  --   "<leader>b",
-  --   group = "buffers",
-  --   expand = function()
-  --     return require("which-key.extras").expand.buf()
-  --   end
-  -- },
-  --  {
-  --    -- Nested mappings are allowed and can be added in any order
-  --    -- Most attributes can be inherited or overridden on any level
-  --    -- There's no limit to the depth of nesting
-  --    mode = { "n", "v" }, -- NORMAL and VISUAL mode
-  --    { "<leader>q", "<cmd>q<cr>", desc = "Quit" }, -- no need to specify mode since it's inherited
-  --    { "<leader>w", "<cmd>w<cr>", desc = "Write" },
-  --  }
+    mode = { 'n' },
+    -- Diagnostic
+    { "gL",    toggle_virtual_lines,                                                                 desc = "Toggle virtual lines diagnostics" },
+    { "gT",    toggle_virtual_text,                                                                  desc = "Toggle virtual text diagnostics" },
+    { "]e",    function() vim.diagnostic.nav_next({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to next error" },
+    { "[e",    function() vim.diagnostic.nav_prev({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to previous error" },
+    -- Navigate windows using Ctrl + hjkl
+    { '<C-h>', '<C-w>h',                                                                             desc = 'Go to Left Window' },
+    { '<C-j>', '<C-w>j',                                                                             desc = 'Go to Lower Window' },
+    { '<C-k>', '<C-w>k',                                                                             desc = 'Go to Upper Window' },
+    { '<C-l>', '<C-w>l',                                                                             desc = 'Go to Right Window' },
+  }
 })

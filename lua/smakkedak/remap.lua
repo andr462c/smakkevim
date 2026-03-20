@@ -22,9 +22,16 @@ local function copy_git_hash()
   end
 end
 
+virtual_text_state = vim.diagnostic.config().virtual_text
+
+local function toggle_virtual_text()
+    virtual_text_state = not vim.diagnostic.config().virtual_text
+    vim.diagnostic.config({ virtual_text = virtual_text_state})
+end
+
 local function toggle_virtual_lines()
     local new_config = not vim.diagnostic.config().virtual_lines
-    vim.diagnostic.config({ virtual_lines = new_config , virtual_text = not new_config})
+    vim.diagnostic.config({ virtual_lines = new_config , virtual_text = not(new_config) and virtual_text_state})
 end
 
 local function open_git_gui_blame()
@@ -60,7 +67,8 @@ which_key.add({
    {
      mode = { 'n' },
      -- Diagnostic
-     { "gK", toggle_virtual_lines, desc = "Toggle virtual lines diagnostics"},
+     { "gL", toggle_virtual_lines, desc = "Toggle virtual lines diagnostics"},
+     { "gT", toggle_virtual_text, desc = "Toggle virtual text diagnostics"},
      { "]e", function() vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to next error" },
      { "[e", function() vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to previous error" },
      -- Navigate windows using Ctrl + hjkl

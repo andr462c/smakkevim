@@ -27,6 +27,12 @@ return {
       desc = "Sidekick Toggle CLI",
     },
     {
+      "<C-a>",
+      function() require("sidekick.cli").focus() end,
+      desc = "Sidekick Focus",
+      mode = { "n", "t", "i", "x" },
+    },
+    {
       "<leader>as",
       function() require("sidekick.cli").select() end,
       -- Or to select only installed tools:

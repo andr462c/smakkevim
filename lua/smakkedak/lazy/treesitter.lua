@@ -7,7 +7,9 @@ return {
     config = function()
       local treesitter = require("nvim-treesitter")
 
-      -- Enable Treesitter highligh to all filetypes that there are parsers for.
+      -- Enable Treesitter highlight (and indentation) for all filetypes that have parsers installed.
+      -- NOTE: indentexpr must be set per-buffer inside the autocmd; setting it at
+      -- config time only affects the buffer that happens to be current at startup.
       vim.api.nvim_create_autocmd('FileType', {
         callback = function(args)
           if
@@ -20,12 +22,10 @@ return {
               )
           then
             vim.treesitter.start(args.buf)
+            vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
           end
         end,
       })
-
-      -- Treesitter indentation
-      vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
     end
   },
   {

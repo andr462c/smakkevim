@@ -16,7 +16,7 @@ return {
           ignore_focus = {},
           always_divide_middle = true,
           always_show_tabline = true,
-          globalstatus = false,
+          globalstatus = true, -- matches vim.opt.laststatus = 3 in setting.lua
           refresh = {
             statusline = 1000,
             tabline = 1000,

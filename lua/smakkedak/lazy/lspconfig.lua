@@ -1,8 +1,5 @@
 return {
   "neovim/nvim-lspconfig",
-  opts = {
-    automatic_servers_installation = true,
-  },
   config = function()
     vim.lsp.config('lua_ls', {
       settings = {

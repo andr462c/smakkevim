@@ -1,5 +1,3 @@
-local which_key = require("which-key")
-
 -- Util functions
 local function copy_git_hash()
   local file = vim.fn.expand("%")
@@ -22,8 +20,8 @@ local function copy_git_hash()
   end
 end
 
-virtual_text_state = vim.diagnostic.config().virtual_text
-virtual_lines_state = vim.diagnostic.config().virtual_lines
+local virtual_text_state = vim.diagnostic.config().virtual_text
+local virtual_lines_state = vim.diagnostic.config().virtual_lines
 
 local function set_diagnostic_config()
   vim.diagnostic.config({ virtual_lines = virtual_lines_state, virtual_text = not virtual_lines_state and virtual_text_state })
@@ -42,10 +40,15 @@ end
 local function open_git_gui_blame()
   local file = vim.fn.expand("%")
   local line = vim.fn.line(".")
-  vim.fn.jobstart({ "git", "gui", "blame", "--line=" .. line, file }, { detach = true })
+  local success = vim.fn.jobstart({ "git", "gui", "blame", "--line=" .. line, file }, { detach = true })
+  if success <= 0 then
+    error("Failed to open git gui blame. Make sure git is installed and the current file is in a git repository.", 0)
+  end
 end
 
-which_key.add({
+-- which-key v3 shows the `desc` of real keymaps automatically,
+-- so registering labels separately is not needed.
+local maps = {
   { "<C-d>",       "<C-d>zz",                                 desc = "Half page down and center" },
   { "<C-u>",       "<C-u>zz",                                 desc = "Half page up and center" },
   { "<leader>F",   vim.lsp.buf.format,                        desc = "Format buffer" },
@@ -60,17 +63,23 @@ which_key.add({
   { "<leader>g]",  ":Gitsigns nav_hunk next<CR>",             desc = "Navigate to next git chunk" },
   { "<leader>g[",  ":Gitsigns nav_hunk prev<CR>",             desc = "Navigate to prev git chunk" },
   { "<leader>gy",  copy_git_hash,                             desc = "Copy commit hash at cursor" },
-  {
-    mode = { 'n' },
-    -- Diagnostic
-    { "gL",    toggle_virtual_lines,                                                                 desc = "Toggle virtual lines diagnostics" },
-    { "gT",    toggle_virtual_text,                                                                  desc = "Toggle virtual text diagnostics" },
-    { "]e",    function() vim.diagnostic.nav_next({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to next error" },
-    { "[e",    function() vim.diagnostic.nav_prev({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to previous error" },
-    -- Navigate windows using Ctrl + hjkl
-    { '<C-h>', '<C-w>h',                                                                             desc = 'Go to Left Window' },
-    { '<C-j>', '<C-w>j',                                                                             desc = 'Go to Lower Window' },
-    { '<C-k>', '<C-w>k',                                                                             desc = 'Go to Upper Window' },
-    { '<C-l>', '<C-w>l',                                                                             desc = 'Go to Right Window' },
-  }
-})
+  -- Change window size
+  { "<A-k>",       ":resize +2<CR>",                          desc = "Increase window height",  silent = true },
+  { "<A-j>",       ":resize -2<CR>",                          desc = "Decrease window height",  silent = true },
+  { "<A-h>",       ":vertical resize -2<CR>",                 desc = "Decrease window width",   silent = true },
+  { "<A-l>",       ":vertical resize +2<CR>",                 desc = "Increase window width",   silent = true },
+  -- Diagnostic
+  { "gL",          toggle_virtual_lines,                                                                 desc = "Toggle virtual lines diagnostics" },
+  { "gT",          toggle_virtual_text,                                                                  desc = "Toggle virtual text diagnostics" },
+  { "]e",          function() vim.diagnostic.nav_next({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to next error" },
+  { "[e",          function() vim.diagnostic.nav_prev({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to previous error" },
+  -- Navigate windows using Ctrl + hjkl
+  { "<C-h>",       "<C-w>h",                                                                             desc = "Go to Left Window" },
+  { "<C-j>",       "<C-w>j",                                                                             desc = "Go to Lower Window" },
+  { "<C-k>",       "<C-w>k",                                                                             desc = "Go to Upper Window" },
+  { "<C-l>",       "<C-w>l",                                                                             desc = "Go to Right Window" },
+}
+
+for _, m in ipairs(maps) do
+  vim.keymap.set(m.mode or "n", m[1], m[2], { desc = m.desc, silent = m.silent })
+end

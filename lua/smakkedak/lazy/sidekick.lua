@@ -7,9 +7,25 @@ return {
         backend = "zellij",
         enabled = true,
       },
+      tools = {
+        local_qwen_flash = {
+          cmd = { "copilot" },
+          env = {
+            COPILOT_PROVIDER_BASE_URL="http://gpu05:7531/v1",
+            COPILOT_MODEL="qwen3.8-flash-next",
+            COPILOT_PROVIDER_MAX_OUTPUT_TOKENS = "32768",
+            COPILOT_OFFLINE = "true",
+          },
+        },
+      },
     },
   },
   keys = {
+    {
+      "<leader>ant",
+      function() require("sidekick").toggle() end,
+      desc = "Toggle Next Edit Suggestion",
+    },
     {
       "<Tab>",
       function()
@@ -71,6 +87,11 @@ return {
       "<leader>ac",
       function() require("sidekick.cli").toggle({ name = "opencode", focus = true }) end,
       desc = "Sidekick Toggle Claude",
+    },
+    {
+      "<leader>aq",
+      function() require("sidekick.cli").toggle({ name = "local_qwen_flash", focus = true }) end,
+      desc = "Sidekick Toggle Local Qwen",
     },
   },
 }

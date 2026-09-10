@@ -34,7 +34,6 @@ return {
         "dockerls",
         "docker_compose_language_service",
         "wgsl_analyzer",
-        "copilot",
       }
     }
   },
@@ -45,6 +44,8 @@ return {
       ensure_installed = {
         -- Tooling (not lsp)
         "tree-sitter-cli",
+        -- language server binary used by blink-copilot (not an nvim LSP client)
+        "copilot-language-server",
       }
     }
   },

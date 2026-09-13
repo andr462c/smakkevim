@@ -64,10 +64,10 @@ local maps = {
   { "<leader>g[",  ":Gitsigns nav_hunk prev<CR>",             desc = "Navigate to prev git chunk" },
   { "<leader>gy",  copy_git_hash,                             desc = "Copy commit hash at cursor" },
   -- Change window size
-  { "<A-k>",       ":resize +2<CR>",                          desc = "Increase window height",  silent = true },
-  { "<A-j>",       ":resize -2<CR>",                          desc = "Decrease window height",  silent = true },
-  { "<A-h>",       ":vertical resize -2<CR>",                 desc = "Decrease window width",   silent = true },
-  { "<A-l>",       ":vertical resize +2<CR>",                 desc = "Increase window width",   silent = true },
+  { "<A-K>",       ":resize +4<CR>",                          desc = "Increase window height",  silent = true },
+  { "<A-J>",       ":resize -4<CR>",                          desc = "Decrease window height",  silent = true },
+  { "<A-H>",       ":vertical resize -4<CR>",                 desc = "Decrease window width",   silent = true },
+  { "<A-L>",       ":vertical resize +4<CR>",                 desc = "Increase window width",   silent = true },
   -- Diagnostic
   { "gL",          toggle_virtual_lines,                                                                 desc = "Toggle virtual lines diagnostics" },
   { "gT",          toggle_virtual_text,                                                                  desc = "Toggle virtual text diagnostics" },
